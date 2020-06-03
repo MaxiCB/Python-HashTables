@@ -21,8 +21,10 @@ class HashTable:
     """
 
     def __init__(self, capacity: int):
-        self.arr: list = [None] * capacity
-        self.capacity = capacity
+        self.arr: list[HashTableEntry] = [None] * capacity
+        self.capacity: int = capacity
+        self.size: int = 0
+        self.load_factor = 0
 
 
     def get_num_slots(self) -> int:
@@ -44,8 +46,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-        pass
+        self.load_factor = self.size / self.capacity
+        return self.load_factor
 
 
     def fnv1(self, key):
@@ -65,10 +67,12 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        hash: int = 5381
-        for i in key:
-            hash = ((hash << 5)+hash)+ord(i)
-        return hash
+        hsh: int = 5381
+        bytes: list[int] = key.encode('utf-8')
+        for i in bytes:
+            # Lock to 32bit to avoid overflows - 0x100000000
+            hsh = ((hsh * 33) ^ i) % 0x100000000
+        return hsh
 
 
     def hash_index(self, key):
@@ -83,13 +87,28 @@ class HashTable:
         """
         Store the value with the given key.
 
-        Hash collisions should be handled with Linked List Chaining.
+        Hash collisions should be handled withLinked List Chaining.
 
         Implement this.
         """
-        # print(self.hash_index(key))
-        self.arr[self.hash_index(key)] = value
+        if self.arr[self.hash_index(key)] is None:
+            self.arr[self.hash_index(key)] = HashTableEntry(key, value)
+            self.size += 1
+        else:
+            self.arr[self.hash_index(key)] = HashTableEntry(key, value)
+        self.get_load_factor()
+        if self.load_factor >= 0.75:
+            self.rehash()
 
+    def rehash(self):
+        temp = self.arr
+        self.arr = [None] * (self.capacity * 2)
+        self.capacity = self.capacity * 2
+        self.size = 0
+
+        for item in temp:
+            if item != None:
+                self.put(item.key, item.value)
 
     def delete(self, key):
         """
@@ -99,9 +118,9 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-        self.arr.pop(self.hash_index(key))
-
+        self.arr[self.hash_index(key)] = None
+        self.size = self.size - 1
+        self.get_load_factor()
 
     def get(self, key):
         """
@@ -111,8 +130,9 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-        return self.arr[self.hash_index(key)]
+        if self.arr[self.hash_index(key)] is not None:
+            return self.arr[self.hash_index(key)].value
+        return None
 
 
     def resize(self, new_capacity):
@@ -122,30 +142,27 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-        pass
+        self.capacity = new_capacity // 2
+        self.rehash();
 
 
+# if __name__ == "__main__":
+    # ht = HashTable(20)
 
-if __name__ == "__main__":
-    ht = HashTable(8)
+    # ht.put("line_1", "'Twas brillig, and the slithy toves")
+    # ht.put("line_2", "Did gyre and gimble in the wabe:")
+    # ht.put("line_3", "All mimsy were the borogoves,")
+    # ht.put("line_4", "And the mome raths outgrabe.")
+    # ht.put("line_5", '"Beware the Jabberwock, my son!')
+    # ht.put("line_6", "The jaws that bite, the claws that catch!")
+    # ht.put("line_7", "Beware the Jubjub bird, and shun")
+    # ht.put("line_8", 'The frumious Bandersnatch!"')
+    # ht.put("line_9", "He took his vorpal sword in hand;")
+    # ht.put("line_10", "Long time the manxome foe he sought--")
+    # ht.put("line_11", "So rested he by the Tumtum tree")
+    # ht.put("line_12", "And stood awhile in thought.")
 
-    ht.put("line_1", "'Twas brillig, and the slithy toves")
-    ht.put("line_2", "Did gyre and gimble in the wabe:")
-    ht.put("line_3", "All mimsy were the borogoves,")
-    ht.put("line_4", "And the mome raths outgrabe.")
-    ht.put("line_5", '"Beware the Jabberwock, my son!')
-    ht.put("line_6", "The jaws that bite, the claws that catch!")
-    ht.put("line_7", "Beware the Jubjub bird, and shun")
-    ht.put("line_8", 'The frumious Bandersnatch!"')
-    ht.put("line_9", "He took his vorpal sword in hand;")
-    ht.put("line_10", "Long time the manxome foe he sought--")
-    ht.put("line_11", "So rested he by the Tumtum tree")
-    ht.put("line_12", "And stood awhile in thought.")
-
-    print("")
-    print(ht.arr)
-    print(ht.get("line_12"))
+    # print("")
 
     # Test storing beyond capacity
     # for i in range(1, 13):
