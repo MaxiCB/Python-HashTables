@@ -20,11 +20,12 @@ class HashTable:
     Implement this.
     """
 
-    def __init__(self, capacity):
-        # Your code here
+    def __init__(self, capacity: int):
+        self.arr: list = [None] * capacity
+        self.capacity = capacity
 
 
-    def get_num_slots(self):
+    def get_num_slots(self) -> int:
         """
         Return the length of the list you're using to hold the hash
         table data. (Not the number of items stored in the hash table,
@@ -34,7 +35,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return len(self.arr)
 
 
     def get_load_factor(self):
@@ -44,6 +45,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        pass
 
 
     def fnv1(self, key):
@@ -54,15 +56,19 @@ class HashTable:
         """
 
         # Your code here
+        pass
 
 
-    def djb2(self, key):
+    def djb2(self, key: str) -> int:
         """
         DJB2 hash, 32-bit
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
+        hash: int = 5381
+        for i in key:
+            hash = ((hash << 5)+hash)+ord(i)
+        return hash
 
 
     def hash_index(self, key):
@@ -73,7 +79,7 @@ class HashTable:
         #return self.fnv1(key) % self.capacity
         return self.djb2(key) % self.capacity
 
-    def put(self, key, value):
+    def put(self, key: str, value: str):
         """
         Store the value with the given key.
 
@@ -81,7 +87,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        # print(self.hash_index(key))
+        self.arr[self.hash_index(key)] = value
 
 
     def delete(self, key):
@@ -93,6 +100,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        self.arr.pop(self.hash_index(key))
 
 
     def get(self, key):
@@ -104,6 +112,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return self.arr[self.hash_index(key)]
 
 
     def resize(self, new_capacity):
@@ -114,6 +123,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        pass
 
 
 
@@ -134,20 +144,22 @@ if __name__ == "__main__":
     ht.put("line_12", "And stood awhile in thought.")
 
     print("")
+    print(ht.arr)
+    print(ht.get("line_12"))
 
     # Test storing beyond capacity
-    for i in range(1, 13):
-        print(ht.get(f"line_{i}"))
+    # for i in range(1, 13):
+        # print(ht.get(f"line_{i}"))
 
     # Test resizing
-    old_capacity = ht.get_num_slots()
-    ht.resize(ht.capacity * 2)
-    new_capacity = ht.get_num_slots()
+    # old_capacity = ht.get_num_slots()
+    # ht.resize(ht.capacity * 2)
+    # new_capacity = ht.get_num_slots()
 
-    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
     # Test if data intact after resizing
-    for i in range(1, 13):
-        print(ht.get(f"line_{i}"))
+    # for i in range(1, 13):
+    #     print(ht.get(f"line_{i}"))
 
-    print("")
+    # print("")
