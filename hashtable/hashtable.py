@@ -98,12 +98,16 @@ class HashTable:
             self.arr[self.hash_index(key)] = HashTableEntry(key, value)
         self.get_load_factor()
         if self.load_factor >= 0.75:
-            self.rehash()
+            self.rehash(True)
 
-    def rehash(self):
+    def rehash(self, up: bool):
         temp = self.arr
-        self.arr = [None] * (self.capacity * 2)
-        self.capacity = self.capacity * 2
+        if up:
+            self.arr = [None] * (self.capacity * 2)
+            self.capacity = self.capacity * 2
+        if up == False:
+            self.arr = [None] * (self.capacity // 2)
+            self.capacity = self.capacity // 2
         self.size = 0
 
         for item in temp:
@@ -121,6 +125,8 @@ class HashTable:
         self.arr[self.hash_index(key)] = None
         self.size = self.size - 1
         self.get_load_factor()
+        if self.load_factor <= 0.2:
+            self.rehash(False)
 
     def get(self, key):
         """
@@ -143,7 +149,7 @@ class HashTable:
         Implement this.
         """
         self.capacity = new_capacity // 2
-        self.rehash();
+        self.rehash(True);
 
 
 # if __name__ == "__main__":
