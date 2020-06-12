@@ -3,3 +3,6 @@
 
 # Your code here
 
+with open("ciphertext.txt") as f:
+    text = f.read()
+    print(text)

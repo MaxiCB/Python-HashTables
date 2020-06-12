@@ -1,6 +1,18 @@
-def word_count(s):
-    # Your code here
+import re
 
+
+def word_count(s):
+    s = s.lower()
+    temp: list[str] = s.split(' ')
+    output = {}
+    for word in temp:
+        test = re.sub('[ \\\\":;,-.+=)/|[\]{}(&*^ ]', '', word)
+        if test != '':
+            if test in output:
+                output[test] += 1
+            else:
+                output[test] = 1
+    return output
 
 
 if __name__ == "__main__":

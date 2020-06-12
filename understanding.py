@@ -12,17 +12,19 @@
 
 # The requirements for a hash function are:
 
-# A hash function must be consistent (deterministic). Every time it receives the same input (like "aqua"), it must return the same output (like 4).
-#  If it’s not deterministic, it is not a hash function.
-# Different input data should return different numbers. For example, if the input "aqua" returns 4, then the input "beige" should not return 4.
-# A hash function must return numbers that are within a specific range.
+# A hash function must be consistent (deterministic). Every time it receives the same input (like "aqua"),
+# it must return the same output (like 4). If it’s not deterministic, it is not a hash function. Different input data
+# should return different numbers. For example, if the input "aqua" returns 4, then the input "beige" should not
+# return 4. A hash function must return numbers that are within a specific range.
 
-# What’s the point of a hashing function? How does a function that maps data to a number get us any closer to a data structure with constant lookup time?
+# What’s the point of a hashing function? How does a function that maps data to a number get us any closer to a data
+# structure with constant lookup time?
 
-# We can combine a hash function with an array to achieve this. Imagine that we know we have five colors to store in our data structure.
-# We can start with a list that has five empty slots.
+# We can combine a hash function with an array to achieve this. Imagine that we know we have five colors to store in
+# our data structure. We can start with a list that has five empty slots.
 
 colors: list = [None] * 5
+
 
 # Naive Implementation
 # As we discussed above, hashing functions take an input (usually a string) and return an integer as the output. 
@@ -34,6 +36,7 @@ def string_hashing(string: str, list_size: int) -> int:
     for byte in string_bytes:
         sum += byte
     return sum % list_size
+
 
 # Setting value at reference to the index provided by hashing
 colors[string_hashing("aqua", len(colors))] = "#00FFFF"
