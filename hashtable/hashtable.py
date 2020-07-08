@@ -66,8 +66,11 @@ class HashTable:
         """
         hsh: int = 5381
         bytes: list[int] = key.encode('utf-8')
+        # Building upon hsh while iterating through the string
+        #
         for i in bytes:
             # Lock to 32bit to avoid overflows - 0x100000000
+            # This could just as well be % self.size to ensure we are never out of bounds
             hsh = ((hsh * 33) ^ i) % 0x100000000
         return hsh
 
@@ -98,19 +101,6 @@ class HashTable:
             self.rehash(True)
         return self.arr[self.hash_index(key)].value
 
-    def rehash(self, up: bool):
-        temp = self.arr
-        if up:
-            self.arr = [None] * (self.capacity * 2)
-            self.capacity = self.capacity * 2
-        if not up:
-            self.arr = [None] * (self.capacity // 2)
-            self.capacity = self.capacity // 2
-        self.size = 0
-
-        for item in temp:
-            if item != None:
-                self.put(item.key, item.value)
 
     def delete(self, key):
         """
@@ -146,39 +136,54 @@ class HashTable:
         Implement this.
         """
         self.capacity = new_capacity // 2
-        self.rehash(True);
+        self.rehash(True)
 
-# if __name__ == "__main__":
-# ht = HashTable(20)
+    def rehash(self, up: bool):
+        temp = self.arr
+        if up:
+            self.arr = [None] * (self.capacity * 2)
+            self.capacity = self.capacity * 2
+        if not up:
+            self.arr = [None] * (self.capacity // 2)
+            self.capacity = self.capacity // 2
+        self.size = 0
 
-# ht.put("line_1", "'Twas brillig, and the slithy toves")
-# ht.put("line_2", "Did gyre and gimble in the wabe:")
-# ht.put("line_3", "All mimsy were the borogoves,")
-# ht.put("line_4", "And the mome raths outgrabe.")
-# ht.put("line_5", '"Beware the Jabberwock, my son!')
-# ht.put("line_6", "The jaws that bite, the claws that catch!")
-# ht.put("line_7", "Beware the Jubjub bird, and shun")
-# ht.put("line_8", 'The frumious Bandersnatch!"')
-# ht.put("line_9", "He took his vorpal sword in hand;")
-# ht.put("line_10", "Long time the manxome foe he sought--")
-# ht.put("line_11", "So rested he by the Tumtum tree")
-# ht.put("line_12", "And stood awhile in thought.")
+        for item in temp:
+            if item is not None:
+                self.put(item.key, item.value)
 
-# print("")
+
+if __name__ == "__main__":
+    ht = HashTable(20)
+
+    ht.put("line_1", "'Twas brillig, and the slithy toves")
+    ht.put("line_2", "Did gyre and gimble in the wabe:")
+    ht.put("line_3", "All mimsy were the borogoves,")
+    ht.put("line_4", "And the mome raths outgrabe.")
+    ht.put("line_5", '"Beware the Jabberwock, my son!')
+    ht.put("line_6", "The jaws that bite, the claws that catch!")
+    ht.put("line_7", "Beware the Jubjub bird, and shun")
+    ht.put("line_8", 'The frumious Bandersnatch!"')
+    ht.put("line_9", "He took his vorpal sword in hand;")
+    ht.put("line_10", "Long time the manxome foe he sought--")
+    ht.put("line_11", "So rested he by the Tumtum tree")
+    ht.put("line_12", "And stood awhile in thought.")
+
+    print("")
 
 # Test storing beyond capacity
-# for i in range(1, 13):
-# print(ht.get(f"line_{i}"))
+    for i in range(1, 13):
+        print(ht.get(f"line_{i}"))
 
 # Test resizing
-# old_capacity = ht.get_num_slots()
-# ht.resize(ht.capacity * 2)
-# new_capacity = ht.get_num_slots()
+    old_capacity = ht.get_num_slots()
+    ht.resize(ht.capacity * 2)
+    new_capacity = ht.get_num_slots()
 
-# print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
 # Test if data intact after resizing
-# for i in range(1, 13):
-#     print(ht.get(f"line_{i}"))
+    for i in range(1, 13):
+        print(ht.get(f"line_{i}"))
 
-# print("")
+    print("")
